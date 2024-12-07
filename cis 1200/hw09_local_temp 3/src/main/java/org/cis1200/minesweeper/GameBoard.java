@@ -111,23 +111,85 @@ public class GameBoard extends JPanel {
         super.paintComponent(g);
 
         // Draws board grid
-        int unitWidth = BOARD_WIDTH / 3;
-        int unitHeight = BOARD_HEIGHT / 3;
+        int unitWidth = BOARD_WIDTH / 10;
+        int unitHeight = BOARD_HEIGHT / 8;
 
         g.drawLine(unitWidth, 0, unitWidth, BOARD_HEIGHT);
         g.drawLine(unitWidth * 2, 0, unitWidth * 2, BOARD_HEIGHT);
         g.drawLine(0, unitHeight, BOARD_WIDTH, unitHeight);
         g.drawLine(0, unitHeight * 2, BOARD_WIDTH, unitHeight * 2);
 
-        // Draws X's and O's
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                int state = ms.getCell(j, i);
-                if (state == 1) {
-                    g.drawOval(30 + 100 * j, 30 + 100 * i, 40, 40);
-                } else if (state == 2) {
-                    g.drawLine(30 + 100 * j, 30 + 100 * i, 70 + 100 * j, 70 + 100 * i);
-                    g.drawLine(30 + 100 * j, 70 + 100 * i, 70 + 100 * j, 30 + 100 * i);
+        //draws squares
+        for (int r = 0; r < BOARD_HEIGHT; r++) {
+            for (int c = 0; c < BOARD_WIDTH; c++) {
+                Square curr = ms.getSquare(r, c);
+                NumAdjBombs numAdjBombs = curr.getNumAdjBombs();
+
+                //draw covered squares
+                if (curr.isCovered()) {
+                    g.setColor(Color.GREEN);
+                    g.fillRect(100 * c, 100 * r, 50, 50);
+                }
+
+                //draw flags
+                if (curr.isFlagged()) {
+                    g.setColor(Color.RED);
+                    g.fillOval(100 * c + 25, 100 * r + 25, 40, 40);
+                }
+
+                //draw uncovered squares
+                if (!curr.isCovered()) {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(100 * c, 100 * r, 50, 50);
+
+                    //draw number of adjacent bombs
+                    if (numAdjBombs == NumAdjBombs.ONE) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("1", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.TWO) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("2", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.THREE) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("3", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.FOUR) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("4", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.FIVE) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("5", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.SIX) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("6", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.SEVEN) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("7", 100 * c, 100 * r);
+                    }
+
+                    if (numAdjBombs == NumAdjBombs.EIGHT) {
+                        g.setColor(Color.BLUE);
+                        g.setFont(new Font("Arial", Font.BOLD, 20));
+                        g.drawString("8", 100 * c, 100 * r);
+                    }
                 }
             }
         }

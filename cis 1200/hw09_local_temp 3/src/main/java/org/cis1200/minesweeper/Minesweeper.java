@@ -292,6 +292,10 @@ public class Minesweeper {
         return gameOver;
     }
 
+    public Square getSquare(int r, int c) {
+        return displayedBoard[r][c];
+    }
+
     /**
      * printGameState prints the current game state
      * for debugging.

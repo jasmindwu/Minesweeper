@@ -6,12 +6,14 @@ public class Square {
     private NumAdjBombs numAdjBombs;
     private boolean flagged;
     private boolean isMine;
+    private boolean checked;
 
-    public Square(boolean covered, NumAdjBombs numAdjBombs, boolean flagged, boolean isMine) {
+    public Square(boolean covered, NumAdjBombs numAdjBombs, boolean flagged, boolean isMine, boolean checked) {
         this.covered = covered;
         this.numAdjBombs = numAdjBombs;
         this.flagged = flagged;
         this.isMine = isMine;
+        this.checked = checked;
     }
 
     public boolean isCovered() {
@@ -48,6 +50,14 @@ public class Square {
 
     public void setMine() {
         isMine = true;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void checked() {
+        checked = true;
     }
 
     @Override

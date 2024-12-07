@@ -47,7 +47,7 @@ public class Minesweeper {
     public void coverSquares() {
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[r].length; c++) {
-                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO, false, false);
+                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO, false, false, false);
             }
         }
     }
@@ -168,21 +168,31 @@ public class Minesweeper {
     }
 
     /**
-     * placeFlag allows players to place a flag on a square. Returns true if the move is
+     * flag allows players to place a flag on a square. Returns true if the move is
      * successful and false if a player tries to select a square that is
      * already uncovered or after the game has ended.
      *
      * @param c column to play in
      * @param r row to play in
-     * @return whether the placing was successful
      */
-    public boolean flag(int r, int c) {
-        if (displayedBoard[r][c].isCovered() && !gameOver) {
-            flagsRemaining--;
-            displayedBoard[r][c].changeFlagged();
-            return true;
+    public void flag(int c, int r) {
+        if (c < 10 && r < 8) {
+            if (displayedBoard[r][c].isCovered()) {
+                System.out.println("covered");
+            }
+
+            System.out.println("flag method reached");
+            if (displayedBoard[r][c].isCovered() && !gameOver && !displayedBoard[r][c].isFlagged()) {
+                System.out.println("covered and will be flagged");
+                displayedBoard[r][c].changeFlagged();
+                flagsRemaining--;
+            } else if (displayedBoard[r][c].isCovered() && !gameOver && displayedBoard[r][c].isFlagged()) {
+                System.out.println("covered and will be unflagged");
+                displayedBoard[r][c].changeFlagged();
+                flagsRemaining++;
+            }
         }
-        return false;
+
     }
 
     /**
@@ -190,53 +200,59 @@ public class Minesweeper {
      * they do not have adjacent bombs. If the square was flagged,
      * it is no longer flagged.
      */
-    public void uncoverNonMines(int c, int r) {
-        if (displayedBoard[r][c].getNumAdjBombs() == NumAdjBombs.ZERO && !gameOver) {
+    public void uncoverNonMines(int r, int c) {
+        if (!displayedBoard[r][c].isChecked()) {
             displayedBoard[r][c].uncover();
+            displayedBoard[r][c].checked();
+
             if (displayedBoard[r][c].isFlagged()) {
                 displayedBoard[r][c].changeFlagged();
                 flagsRemaining++;
             }
 
-            //check upper diagonal left if possible
-            if (r > 0 && c > 0) {
-                uncoverNonMines(r - 1, c - 1);
+            if (displayedBoard[r][c].getNumAdjBombs() == NumAdjBombs.ZERO) {
+
+                //check upper diagonal left if possible
+                if (r > 0 && c > 0) {
+                    uncoverNonMines(r - 1, c - 1);
+                }
+
+                //check directly above if possible
+                if (r > 0) {
+                    uncoverNonMines(r - 1, c);
+                }
+
+                //check upper diagonal right if possible
+                if (r > 0 && c < 9) {
+                    uncoverNonMines(r - 1, c + 1);
+                }
+
+                //check directly right if possible
+                if (c < 9) {
+                    uncoverNonMines(r, c + 1);
+                }
+
+                //check lower diagonal right if possible
+                if (r < 7 && c < 9) {
+                    uncoverNonMines(r + 1, c + 1);
+                }
+
+                //check directly below if possible
+                if (r < 7) {
+                    uncoverNonMines(r + 1, c);
+                }
+
+                //check lower diagonal left if possible
+                if (r < 7 && c > 0) {
+                    uncoverNonMines(r + 1, c - 1);
+                }
+
+                //check directly left if possible
+                if (c > 0) {
+                    uncoverNonMines(r, c - 1);
+                }
             }
 
-            //check directly above if possible
-            if (r > 0) {
-                uncoverNonMines(r - 1, c);
-            }
-
-            //check upper diagonal right if possible
-            if (r > 0 && c < 9) {
-                uncoverNonMines(r - 1, c + 1);
-            }
-
-            //check directly right if possible
-            if (c < 9) {
-                uncoverNonMines(r, c + 1);
-            }
-
-            //check lower diagonal right if possible
-            if (r < 7 && c < 9) {
-                uncoverNonMines(r + 1, c + 1);
-            }
-
-            //check directly below if possible
-            if (r < 7) {
-                uncoverNonMines(r + 1, c);
-            }
-
-            //check lower diagonal left if possible
-            if (r < 7 && c > 0) {
-                uncoverNonMines(r + 1, c - 1);
-            }
-
-            //check directly left if possible
-            if (c > 0) {
-                uncoverNonMines(r, c - 1);
-            }
         }
     }
 
@@ -247,21 +263,22 @@ public class Minesweeper {
      *
      * @param c column to play in
      * @param r row to play in
-     * @return whether the selection was successful
      */
-    public boolean selectSquare(int c, int r) {
-        if (displayedBoard[r][c].isCovered() && !displayedBoard[r][c].isFlagged() && !gameOver) {
-            displayedBoard[r][c].uncover();
-            if (displayedBoard[r][c].isMine()) {
-                won = false;
-                gameOver = true;
-            } else {
-                checkWin();
-                uncoverNonMines(r, c);
+    public void selectSquare(int c, int r) {
+        if (c < 10 && r < 8) {
+            if (displayedBoard[r][c].isCovered() && !displayedBoard[r][c].isFlagged() && !gameOver) {
+                displayedBoard[r][c].uncover();
+                if (displayedBoard[r][c].isMine()) {
+                    won = false;
+                    gameOver = true;
+                } else {
+                    checkWin();
+                    if (displayedBoard[r][c].getNumAdjBombs() == NumAdjBombs.ZERO) {
+                        uncoverNonMines(r, c);
+                    }
+                }
             }
-            return true;
         }
-        return false;
     }
 
     /**
@@ -329,7 +346,7 @@ public class Minesweeper {
         displayedBoard = new Square[8][10];
         mineBoard = new boolean[8][10];
         gameOver = false;
-        numBombs = 40;
+        numBombs = 10;
         flagsRemaining = numBombs;
 
         coverSquares();
@@ -350,7 +367,10 @@ public class Minesweeper {
     public static void main(String[] args) {
         Minesweeper m = new Minesweeper();
 
-        m.selectSquare(2, 1);
+        m.flag(1, 2);
+        System.out.println(""+ m.getSquare(2, 1).isCovered());
+
+
         m.printGameState();
     }
 }

@@ -59,14 +59,24 @@ public class GameBoard extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Point p = e.getPoint();
+                System.out.println("covered before before");
 
                 // updates the model given the coordinates of the mouseclick
-                ms.selectSquare(p.x / 50, p.y / 50);
+                if (e.isShiftDown()) {
+                    // click with shift button held down detected
+                    ms.flag(p.x / 50, p.y / 50);
+                    System.out.println("flagged");
+                } else {
+                    //click detected
+                    ms.selectSquare(p.x / 50, p.y / 50);
+                    System.out.println("clicked");
+                }
 
                 updateStatus(); // updates the status JLabel
                 repaint(); // repaints the game board
             }
         });
+
     }
 
     /**
@@ -74,7 +84,7 @@ public class GameBoard extends JPanel {
      */
     public void reset() {
         ms.reset();
-        status.setText("Flags remaining: 40");
+        status.setText("Flags remaining: 10");
         repaint();
 
         // Makes sure this component has keyboard/mouse focus
@@ -85,7 +95,7 @@ public class GameBoard extends JPanel {
      * Updates the JLabel to reflect the current state of the game.
      */
     private void updateStatus() {
-        status.setText("" + ms.getFlagsRemaining());
+        status.setText("Flags remaining: " + ms.getFlagsRemaining());
 
         if (ms.isGameOver()) {
             if (ms.checkWin()) {
@@ -114,81 +124,106 @@ public class GameBoard extends JPanel {
         int unitWidth = BOARD_WIDTH / 10;
         int unitHeight = BOARD_HEIGHT / 8;
 
-        g.drawLine(unitWidth, 0, unitWidth, BOARD_HEIGHT);
-        g.drawLine(unitWidth * 2, 0, unitWidth * 2, BOARD_HEIGHT);
-        g.drawLine(0, unitHeight, BOARD_WIDTH, unitHeight);
-        g.drawLine(0, unitHeight * 2, BOARD_WIDTH, unitHeight * 2);
-
         //draws squares
-        for (int r = 0; r < BOARD_HEIGHT; r++) {
-            for (int c = 0; c < BOARD_WIDTH; c++) {
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 10; c++) {
                 Square curr = ms.getSquare(r, c);
                 NumAdjBombs numAdjBombs = curr.getNumAdjBombs();
+
+                //vertical grid lines
+                g.setColor(Color.BLACK);
+                g.drawLine(unitWidth, 0, unitWidth, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 2, 0, unitWidth * 2, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 3, 0, unitWidth * 3, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 4, 0, unitWidth * 4, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 5, 0, unitWidth * 5, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 6, 0, unitWidth * 6, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 7, 0, unitWidth * 7, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 8, 0, unitWidth * 8, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 9, 0, unitWidth * 9, BOARD_HEIGHT);
+                g.drawLine(unitWidth * 10, 0, unitWidth * 10, BOARD_HEIGHT);
+
+
+                //horizontal grid lines
+                g.drawLine(0, unitHeight, BOARD_WIDTH, unitHeight);
+                g.drawLine(0, unitHeight * 2, BOARD_WIDTH, unitHeight * 2);
+                g.drawLine(0, unitHeight * 3, BOARD_WIDTH, unitHeight * 3);
+                g.drawLine(0, unitHeight * 4, BOARD_WIDTH, unitHeight * 4);
+                g.drawLine(0, unitHeight * 5, BOARD_WIDTH, unitHeight * 5);
+                g.drawLine(0, unitHeight * 6, BOARD_WIDTH, unitHeight * 6);
+                g.drawLine(0, unitHeight * 7, BOARD_WIDTH, unitHeight * 7);
+                g.drawLine(0, unitHeight * 8, BOARD_WIDTH, unitHeight * 8);
 
                 //draw covered squares
                 if (curr.isCovered()) {
                     g.setColor(Color.GREEN);
-                    g.fillRect(100 * c, 100 * r, 50, 50);
-                }
+                    g.fillRect(50 * c, 50 * r, unitWidth, unitHeight);
 
-                //draw flags
-                if (curr.isFlagged()) {
-                    g.setColor(Color.RED);
-                    g.fillOval(100 * c + 25, 100 * r + 25, 40, 40);
+                    //draw flags
+                    if (curr.isFlagged()) {
+                        g.setColor(Color.PINK);
+                        g.fillOval(50 * c + 1, 50 * r + 1, 48, 48);
+                    }
                 }
 
                 //draw uncovered squares
-                if (!curr.isCovered()) {
+                //draws mine if mine is uncovered
+                if (!curr.isCovered() && curr.isMine()) {
+                    g.setColor(Color.RED);
+                    g.fillOval(50 * c + 1, 50 * r + 1, 48, 48);
+
+                    //draws uncovered squares if they do not have mines
+                } else if (!curr.isCovered()) {
                     g.setColor(Color.WHITE);
-                    g.fillRect(100 * c, 100 * r, 50, 50);
+                    g.fillRect(50 * c, 50 * r, unitWidth, unitHeight);
 
                     //draw number of adjacent bombs
                     if (numAdjBombs == NumAdjBombs.ONE) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("1", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("1", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.TWO) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("2", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("2", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.THREE) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("3", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("3", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.FOUR) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("4", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("4", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.FIVE) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("5", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("5", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.SIX) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("6", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("6", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.SEVEN) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("7", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("7", 50 * c + 15, 50 * r + 37);
                     }
 
                     if (numAdjBombs == NumAdjBombs.EIGHT) {
                         g.setColor(Color.BLUE);
-                        g.setFont(new Font("Arial", Font.BOLD, 20));
-                        g.drawString("8", 100 * c, 100 * r);
+                        g.setFont(new Font("Arial", Font.BOLD, 35));
+                        g.drawString("8", 50 * c + 15, 50 * r + 37);
                     }
                 }
             }

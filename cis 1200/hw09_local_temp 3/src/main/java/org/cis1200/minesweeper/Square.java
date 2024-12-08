@@ -50,15 +50,6 @@ public class Square {
     }
 
     /**
-     * isFlagged checks whether the square is flagged.
-     *
-     * @return true if the square is flagged
-     */
-    public boolean isFlagged() {
-        return flagged;
-    }
-
-    /**
      * setNumAdjBombs sets the square's number of adjacent bombs.
      *
      * @param numAdjBombs number of adjacent bombs to set the square to have
@@ -68,11 +59,25 @@ public class Square {
     }
 
     /**
+     * isFlagged checks whether the square is flagged.
+     *
+     * @return true if the square is flagged
+     */
+    public boolean isFlagged() {
+        return flagged;
+    }
+
+    /**
      * Flags the square if it is un-flagged and un-flags the square
      * if it is flagged.
      */
-    public void changeFlagged() {
+    public void changeFlagged(Minesweeper m) {
         flagged = !flagged;
+        if (flagged) {
+            m.setFlagsRemaining(m.getFlagsRemaining() - 1);
+        } else {
+            m.setFlagsRemaining(m.getFlagsRemaining() + 1);
+        }
     }
 
     /**
@@ -101,11 +106,12 @@ public class Square {
     }
 
     /**
-     * checked sets the square to having been checked.
+     * checked checks a square
      */
     public void checked() {
         checked = true;
     }
+
 
     /**
      * toString returns a visual representation of the square representing its state.

@@ -3,28 +3,21 @@ import javax.swing.*;
 import java.lang.Math;
 import java.io.*;
 
-/**
- * CIS 120 HW09 - TicTacToe Demo
+/*
+ * CIS 120 HW09 - MineSweeper
  * (c) University of Pennsylvania
- * Created by Bayley Tuch, Sabrina Green, and Nicolas Corona in Fall 2020.
+ * Created by Jasmin Wu in Fall 2024.
  */
 
 /**
- * This class is a model for TicTacToe.
- * 
- * This game adheres to a Model-View-Controller design framework.
- * This framework is very effective for turn-based games. We
- * STRONGLY recommend you review these lecture slides, starting at
- * slide 8, for more details on Model-View-Controller:
- * https://www.seas.upenn.edu/~cis120/current/files/slides/lec36.pdf
- * 
- * This model is completely independent of the view and controller.
- * This is in keeping with the concept of modularity! We can play
- * the whole game from start to finish without ever drawing anything
- * on a screen or instantiating a Java Swing object.
- * 
- * Run this file to see the main method play a game of TicTacToe,
- * visualized with Strings printed to the console.
+ * This is Minesweeper!
+ *
+ * Your objective is to uncover all the squares without mines hidden underneath.
+ * Be careful not to detonate any of the 10 mines in the process, or the game will end.
+ * You can place flags where you think there are mines to keep track.
+ * Win by avoiding all mines and uncovering all non-mines!
+ *
+ * You can save your game progress anytime and restore your most recent save anytime.
  */
 public class Minesweeper {
 
@@ -33,7 +26,6 @@ public class Minesweeper {
     private int flagsRemaining;
     private int numBombs;
     private boolean gameOver;
-    private boolean won;
 
     /**
      * Constructor sets up game state.
@@ -43,13 +35,12 @@ public class Minesweeper {
     }
 
     /**
-     * populateMines initializes mineBoard with mines
-     * in random places.
+     * coverSquares initializes displayedBoard with default squares in initial state.
      */
     public void coverSquares() {
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[r].length; c++) {
-                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO, false, false, false);
+                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO,false, false, false);
             }
         }
     }
@@ -170,26 +161,19 @@ public class Minesweeper {
     }
 
     /**
-     * flag allows players to place a flag on a square. Returns true if the move is
-     * successful and false if a player tries to select a square that is
-     * already uncovered or after the game has ended.
+     * flag allows players to place a flag on a square that is currently un-flagged
+     * (if the game has not ended yet).
+     * If the square is already flagged, the flag is removed.
      *
-     * @param c column to play in
-     * @param r row to play in
+     * @param r row square to flag is in
+     * @param c column square to flag is in
      */
-    public void flag(int c, int r) {
-        if (c < 10 && r < 8) {
-            if (displayedBoard[r][c].isCovered()) {
-                System.out.println("covered");
-            }
-
-            System.out.println("flag method reached");
+    public void flag(int r, int c) {
+        if (r < 8 && c < 10) {
             if (displayedBoard[r][c].isCovered() && !gameOver && !displayedBoard[r][c].isFlagged()) {
-                System.out.println("covered and will be flagged");
                 displayedBoard[r][c].changeFlagged();
                 flagsRemaining--;
             } else if (displayedBoard[r][c].isCovered() && !gameOver && displayedBoard[r][c].isFlagged()) {
-                System.out.println("covered and will be unflagged");
                 displayedBoard[r][c].changeFlagged();
                 flagsRemaining++;
             }
@@ -199,8 +183,14 @@ public class Minesweeper {
 
     /**
      * uncoverNonMines recursively uncovers adjacent squares if
-     * they do not have adjacent bombs. If the square was flagged,
+     * they do not have adjacent bombs. It stops uncovering
+     * once it reaches the grid edge, a square that has already been uncovered,
+     * or a square with adjacent bombs (after
+     * uncovering that square). If the square was flagged,
      * it is no longer flagged.
+     *
+     * @param r row square to uncover
+     * @param c column square to uncover
      */
     public void uncoverNonMines(int r, int c) {
         if (!displayedBoard[r][c].isChecked()) {
@@ -254,24 +244,23 @@ public class Minesweeper {
                     uncoverNonMines(r, c - 1);
                 }
             }
-
         }
     }
 
     /**
-     * selectSquare allows players to select a square. Returns true if the move is
-     * successful and false if a player tries to select a square that is
-     * already uncovered, flagged, or after the game has ended.
+     * selectSquare allows players to uncover a square if it is covered, not flagged,
+     * and the game is not over. If the square is a mine, the game ends. It checks if the
+     * square is the last square needed to uncover. If the square has zero adjacent bombs,
+     * it calls uncoverNonMines.
      *
-     * @param c column to play in
-     * @param r row to play in
+     * @param r row square to uncover
+     * @param c column square to uncover
      */
-    public void selectSquare(int c, int r) {
+    public void selectSquare(int r, int c) {
         if (c < 10 && r < 8) {
             if (displayedBoard[r][c].isCovered() && !displayedBoard[r][c].isFlagged() && !gameOver) {
                 displayedBoard[r][c].uncover();
                 if (displayedBoard[r][c].isMine()) {
-                    won = false;
                     gameOver = true;
                 } else {
                     checkWin();
@@ -299,56 +288,99 @@ public class Minesweeper {
             }
         }
         gameOver = true;
-        won = true;
         return true;
     }
 
+    /**
+     * isGameOver checks whether the game is over.
+     *
+     * @return true if the game is over
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * getNumBombs gets the number of bombs .
+     *
+     * @return numBombs
+     */
     public int getNumBombs() {
         return numBombs;
     }
 
+    /**
+     * getNumBombs gets flagsRemaining.
+     *
+     * @return flagsRemaining.
+     */
     public int getFlagsRemaining() {
         return flagsRemaining;
     }
 
+    /**
+     * getNumBombs gets the displayed board.
+     *
+     * @return displayedBoard
+     */
     public Square[][] getDisplayedBoard() {
         return displayedBoard;
     }
 
-    public boolean[][] geMineBoard() {
-        return mineBoard;
-    }
-
+    /**
+     * getNumBombs gets the current square.
+     *
+     * @param r row the square to get is in
+     * @param c column the square to get is in
+     * @return the square at displayedBoard[r][c]
+     */
     public Square getSquare(int r, int c) {
         return displayedBoard[r][c];
     }
 
+    /**
+     * setFlagsRemaining sets the number of flags remaining.
+     *
+     * @param flagsRemaining the number of flags to set the remaining number to
+     */
     public void setFlagsRemaining(int flagsRemaining) {
         this.flagsRemaining = flagsRemaining;
     }
 
+    /**
+     * setNumBombs sets the number of bombs to set the board to have.
+     *
+     * @param numBombs the number of bombs to set the board to have
+     */
     public void setNumBombs(int numBombs) {
         this.numBombs = numBombs;
     }
 
+    /**
+     * setDisplayedBoard sets the displayed board of the game.
+     *
+     * @param displayedBoard the displayed board to set
+     */
     public void setDisplayedBoard(Square[][] displayedBoard) {
         this.displayedBoard = displayedBoard;
     }
 
+    /**
+     * setMineBoard sets the mine board of the game.
+     *
+     * @param mineBoard the mine board to set
+     */
     public void setMineBoard(boolean[][] mineBoard) {
         this.mineBoard = mineBoard;
     }
 
+    /**
+     * setMineBoard sets if the game is over.
+     *
+     * @param gameOver if the game is over
+     */
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
-    }
-
-    public void setWon(boolean won) {
-        this.won = won;
     }
 
     /**
@@ -392,36 +424,8 @@ public class Minesweeper {
         calcAdjMines();
     }
 
-    /*
-    public void save(String fileName) {
-        try {
-            FileOutputStream fos = new FileOutputStream(fileName);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog();
-        }
-    }
 
-    public static Minesweeper load(String fileName) {
-        try {
-            FileInputStream fis = new FileInputStream(fileName);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            Minesweeper savedFile = (Minesweeper) ois.readObject();
-            return savedFile;
-
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(
-                    frame, // parent of dialog window
-                    "Cannot load file\n" + ex.getMessage(),
-                    "Alert", // title of dialog
-                    JOptionPane.ERROR_MESSAGE // type of dialog
-            );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }*/
-
-        /**
+    /**
      * This main method illustrates how the model is completely independent of
      * the view and controller. We can play the game from start to finish
      * without ever creating a Java Swing object.

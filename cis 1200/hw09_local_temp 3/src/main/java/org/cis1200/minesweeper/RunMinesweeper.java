@@ -55,12 +55,35 @@ public class RunMinesweeper implements Runnable {
         control_panel.add(reset);
 
         final JButton save = new JButton("Save");
-        save.addActionListener(e -> board.save("minesweeper_save.txt"));
+        save.addActionListener(e -> board.save("src/main/java/org/cis1200/files/minesweeper_save.txt"));
         control_panel.add(save);
 
         final JButton load = new JButton("Load");
-        load.addActionListener(e -> board.load("minesweeper_save.txt"));
+        load.addActionListener(e -> board.load("src/main/java/org/cis1200/files/minesweeper_save.txt"));
         control_panel.add(load);
+
+        String instructionsMessage =
+
+                "You're now playing Minesweeper!\n\n" +
+                        "Your objective is to uncover all the squares\n" +
+                        "without mines hidden underneath.\n" +
+                        "Be careful not to detonate any of the 10 mines\n" +
+                        "in the process, or the game will end.\n" +
+                        "You can place flags where you think there are mines to keep track.\n" +
+                        "Win by avoiding all mines and uncovering all non-mines!\n\n\n" +
+                        "How to play:\n\n" +
+                        "-Click on any square to uncover it.\n" +
+                        "-Place flags by holding shift then clicking.\n" +
+                        "-Hold shift and click on any flags to remove them.\n" +
+                        "-To save your game progress, press the save button.\n" +
+                        "-Restore your most recent save anytime\n" +
+                        "by pressing the load button.\n\n" +
+                        "If you ever want to see these instructions again,\n" +
+                        "just press the instructions button!";
+
+        final JButton instructions = new JButton("Instructions");
+        instructions.addActionListener(e -> JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE));
+        control_panel.add(instructions);
 
         // Put the frame on the screen
         frame.pack();
@@ -69,5 +92,6 @@ public class RunMinesweeper implements Runnable {
 
         // Start the game
         board.reset();
+        JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE) ;
     }
 }

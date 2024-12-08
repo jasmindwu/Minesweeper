@@ -1,9 +1,9 @@
 package org.cis1200.minesweeper;
 
 /*
- * CIS 120 HW09 - TicTacToe Demo
+ * CIS 120 HW09 - MineSweeper
  * (c) University of Pennsylvania
- * Created by Bayley Tuch, Sabrina Green, and Nicolas Corona in Fall 2020.
+ * Created by Jasmin Wu in Fall 2024.
  */
 
 import javax.swing.*;
@@ -17,13 +17,13 @@ import java.io.*;
  * As the user clicks the game board, the model is updated. Whenever the model
  * is updated, the game board repaints itself and updates its status JLabel to
  * reflect the current state of the model.
- *
+ * <p>
  * This game adheres to a Model-View-Controller design framework. This
  * framework is very effective for turn-based games. We STRONGLY
  * recommend you review these lecture slides, starting at slide 8,
  * for more details on Model-View-Controller:
  * https://www.seas.upenn.edu/~cis120/current/files/slides/lec37.pdf
- *
+ * <p>
  * In a Model-View-Controller framework, GameBoard stores the model as a field
  * and acts as both the controller (with a MouseListener) and the view (with
  * its paintComponent method and the status JLabel).
@@ -65,11 +65,11 @@ public class GameBoard extends JPanel {
                 // updates the model given the coordinates of the mouseclick
                 if (e.isShiftDown()) {
                     // click with shift button held down detected
-                    ms.flag(p.x / 50, p.y / 50);
+                    ms.flag(p.y / 50,p.x / 50);
                     System.out.println("flagged");
                 } else {
                     //click detected
-                    ms.selectSquare(p.x / 50, p.y / 50);
+                    ms.selectSquare(p.y / 50, p.x / 50);
                     System.out.println("clicked");
                 }
 
@@ -92,105 +92,97 @@ public class GameBoard extends JPanel {
         requestFocusInWindow();
     }
 
+    /**
+     * Saves the current state of the game to a text file minesweeper_save.txt
+     * If there is an error saving the file, a pop-up error message appears.
+     */
     public void save(String fileName) {
-        if (fileName == null) {
-            throw new IllegalArgumentException();
-        } else {
-            try {
-                Square[][] displayedBoard = ms.getDisplayedBoard();
-                boolean[][] mineBoard = ms.geMineBoard();
-                FileWriter fw = new FileWriter(fileName);
-                BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            Square[][] displayedBoard = ms.getDisplayedBoard();
+            FileWriter fw = new FileWriter(fileName);
+            BufferedWriter bw = new BufferedWriter(fw);
 
-                bw.write("" + ms.getFlagsRemaining());
-                bw.newLine();
+            //saves overall game state
+            bw.write("" + ms.getFlagsRemaining());
+            bw.newLine();
 
-                bw.write("" + ms.getNumBombs());
-                bw.newLine();
+            bw.write("" + ms.getNumBombs());
+            bw.newLine();
 
-                bw.write("" + ms.isGameOver());
-                bw.newLine();
+            bw.write("" + ms.isGameOver());
+            bw.newLine();
 
-                bw.write("" + ms.checkWin());
-                bw.newLine();
-
-                for (int r = 0; r < displayedBoard.length; r++) {
-                    for (int c = 0; c < displayedBoard[r].length; c++) {
-                        Square curr = displayedBoard[r][c];
-                        bw.write(curr.isCovered() + "," + curr.getNumAdjBombs() + ","
-                                + curr.isFlagged() + "," + curr.isMine() + ","
-                                + curr.isChecked());
-                        bw.newLine();
-                    }
+            //saves data of all the squares
+            for (int r = 0; r < displayedBoard.length; r++) {
+                for (int c = 0; c < displayedBoard[r].length; c++) {
+                    Square curr = displayedBoard[r][c];
+                    bw.write(curr.isCovered() + "," + curr.getNumAdjBombs() + ","
+                            + curr.isFlagged() + "," + curr.isMine() + ","
+                            + curr.isChecked());
+                    bw.newLine();
                 }
-                status.setText("Game progress saved!");
-                bw.close();
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+            status.setText("Game progress saved!");
+            bw.close();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
 
+    /**
+     * Loads the most recent save of the game from the text file minesweeper_save.txt
+     * If there is an error loading the file, displays a pop-up error message.
+     */
     public void load(String fileName) {
-        if (fileName == null) {
-            throw new IllegalArgumentException();
-        } else {
-            try {
-                Square[][] displayedBoard = new Square[8][10];
-                boolean[][] mineBoard = new boolean[8][10];
+        try {
+            Square[][] displayedBoard = new Square[8][10];
+            boolean[][] mineBoard = new boolean[8][10];
 
-                FileReader fr = new FileReader(fileName);
-                BufferedReader br = new BufferedReader(fr);
+            FileReader fr = new FileReader(fileName);
+            BufferedReader br = new BufferedReader(fr);
 
-                int flagsRemaining = Integer.parseInt(br.readLine());
-                ms.setFlagsRemaining(flagsRemaining);
+            int flagsRemaining = Integer.parseInt(br.readLine());
+            ms.setFlagsRemaining(flagsRemaining);
 
-                int numBombs = Integer.parseInt(br.readLine());
-                ms.setNumBombs(numBombs);
+            int numBombs = Integer.parseInt(br.readLine());
+            ms.setNumBombs(numBombs);
 
-                boolean gameOver = Boolean.parseBoolean(br.readLine());
-                ms.setGameOver(gameOver);
+            boolean gameOver = Boolean.parseBoolean(br.readLine());
+            ms.setGameOver(gameOver);
 
-                boolean won = Boolean.parseBoolean(br.readLine());
-                ms.setWon(won);
+            for (int r = 0; r < displayedBoard.length; r++) {
+                for (int c = 0; c < displayedBoard[r].length; c++) {
+                    String squareLine = br.readLine();
+                    String[] squareProperties = squareLine.split(",");
+                    boolean isCovered = Boolean.parseBoolean(squareProperties[0]);
+                    NumAdjBombs numAdjBombs = NumAdjBombs.valueOf(squareProperties[1]);
+                    boolean isFlagged = Boolean.parseBoolean(squareProperties[2]);
+                    boolean isMine = Boolean.parseBoolean(squareProperties[3]);
 
-                for (int r = 0; r < displayedBoard.length; r++) {
-                    for (int c = 0; c < displayedBoard[r].length; c++) {
-                        String squareLine = br.readLine();
-                        String[] squareProperties = squareLine.split(",");
-                        boolean isCovered = Boolean.parseBoolean(squareProperties[0]);
-                        NumAdjBombs numAdjBombs = NumAdjBombs.valueOf(squareProperties[1]);
-                        boolean isFlagged = Boolean.parseBoolean(squareProperties[2]);
-                        boolean isMine = Boolean.parseBoolean(squareProperties[3]);
-
-                        if (isMine) {
-                            mineBoard[r][c] = true;
-                        }
-
-                        boolean isChecked = Boolean.parseBoolean(squareProperties[4]);
-
-                        Square curr = new Square(isCovered, numAdjBombs, isFlagged, isMine, isChecked);
-
-                        displayedBoard[r][c] = curr;
+                    if (isMine) {
+                        mineBoard[r][c] = true;
                     }
+
+                    boolean isChecked = Boolean.parseBoolean(squareProperties[4]);
+                    Square curr = new Square(isCovered, numAdjBombs, isFlagged, isMine, isChecked);
+
+                    displayedBoard[r][c] = curr;
                 }
-                br.close();
-
-                ms.setDisplayedBoard(displayedBoard);
-                ms.setMineBoard(mineBoard);
-
-                status.setText("Most recent game progress loaded!");
-                updateUI();
-
-
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+            br.close();
+
+            ms.setDisplayedBoard(displayedBoard);
+            ms.setMineBoard(mineBoard);
+
+            status.setText("Most recent game progress loaded!");
+            updateUI();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     /**
      * Updates the JLabel to reflect the current state of the game.
      */
@@ -208,7 +200,7 @@ public class GameBoard extends JPanel {
 
     /**
      * Draws the game board.
-     *
+     * <p>
      * There are many ways to draw a game board. This approach
      * will not be sufficient for most games, because it is not
      * modular. All of the logic for drawing the game board is
@@ -329,6 +321,7 @@ public class GameBoard extends JPanel {
             }
         }
     }
+
 
     /**
      * Returns the size of the game board.

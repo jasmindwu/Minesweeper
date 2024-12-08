@@ -16,7 +16,8 @@ public class Square {
     /**
      * Constructor sets up Square.
      */
-    public Square(boolean covered, NumAdjBombs numAdjBombs, boolean flagged, boolean isMine, boolean checked) {
+    public Square(boolean covered, NumAdjBombs numAdjBombs,
+                  boolean flagged, boolean isMine, boolean checked) {
         this.covered = covered;
         this.numAdjBombs = numAdjBombs;
         this.flagged = flagged;
@@ -123,27 +124,38 @@ public class Square {
     public String toString() {
         if (flagged) {
             return "f";
-        } if (covered) {
+        }
+        if (covered) {
             return "c";
-        } if (isMine) {
+        }
+        if (isMine) {
             return "m";
-        } if (numAdjBombs == NumAdjBombs.ZERO) {
+        }
+        if (numAdjBombs == NumAdjBombs.ZERO) {
             return "0";
-        } if (numAdjBombs == NumAdjBombs.ONE) {
+        }
+        if (numAdjBombs == NumAdjBombs.ONE) {
             return "1";
-        } if (numAdjBombs == NumAdjBombs.TWO) {
+        }
+        if (numAdjBombs == NumAdjBombs.TWO) {
             return "2";
-        } if (numAdjBombs == NumAdjBombs.THREE) {
+        }
+        if (numAdjBombs == NumAdjBombs.THREE) {
             return "3";
-        } if (numAdjBombs == NumAdjBombs.FOUR) {
+        }
+        if (numAdjBombs == NumAdjBombs.FOUR) {
             return "4";
-        } if (numAdjBombs == NumAdjBombs.FIVE) {
+        }
+        if (numAdjBombs == NumAdjBombs.FIVE) {
             return "5";
-        } if (numAdjBombs == NumAdjBombs.SIX) {
+        }
+        if (numAdjBombs == NumAdjBombs.SIX) {
             return "6";
-        } if (numAdjBombs == NumAdjBombs.SEVEN) {
+        }
+        if (numAdjBombs == NumAdjBombs.SEVEN) {
             return "7";
-        } if (numAdjBombs == NumAdjBombs.EIGHT) {
+        }
+        if (numAdjBombs == NumAdjBombs.EIGHT) {
             return "8";
         }
         return "";

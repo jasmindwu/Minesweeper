@@ -1,6 +1,7 @@
 package org.cis1200.minesweeper;
 
 import org.junit.jupiter.api.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -488,7 +489,7 @@ public class MinesweeperTest {
         m.populateMines();
         Square[][] displayedBoard = m.getDisplayedBoard();
         m.setGameOver(true);
-        m.flag(7,9);
+        m.flag(7, 9);
         assertFalse(displayedBoard[7][9].isFlagged());
     }
 
@@ -794,7 +795,7 @@ public class MinesweeperTest {
 
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[0].length; c++) {
-                if (r != 3 || c !=3) {
+                if (r != 3 || c != 3) {
                     displayedBoard[r][c].setMine();
                 }
             }
@@ -867,6 +868,24 @@ public class MinesweeperTest {
         assertTrue(m.isGameOver());
     }
 
+    //tests selectSquares selecting a square outside the grid does nothing
+    @Test
+    public void testSelectSquaresOutside() {
+        Square[][] displayedBoard = m.getDisplayedBoard();
+        int covered = 0;
+        m.selectSquare(10, 11);
+        for (int r = 0; r < displayedBoard.length; r++) {
+            for (int c = 0; c < displayedBoard[0].length; c++) {
+                if (displayedBoard[r][c].isCovered()) {
+                    covered++;
+                }
+            }
+        }
+        assertEquals(80, covered);
+        assertFalse(m.checkWin());
+        assertFalse(m.isGameOver());
+    }
+
     //tests checkWin if win
     @Test
     public void testCheckWinTrue() {
@@ -874,7 +893,7 @@ public class MinesweeperTest {
 
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[0].length; c++) {
-                if (r != 3 || c !=3) {
+                if (r != 3 || c != 3) {
                     displayedBoard[r][c].setMine();
                 }
             }

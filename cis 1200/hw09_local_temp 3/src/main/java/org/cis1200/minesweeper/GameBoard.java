@@ -65,7 +65,7 @@ public class GameBoard extends JPanel {
                 // updates the model given the coordinates of the mouseclick
                 if (e.isShiftDown()) {
                     // click with shift button held down detected
-                    ms.flag(p.y / 50,p.x / 50);
+                    ms.flag(p.y / 50, p.x / 50);
                     System.out.println("flagged");
                 } else {
                     //click detected
@@ -126,7 +126,9 @@ public class GameBoard extends JPanel {
             bw.close();
 
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -175,7 +177,9 @@ public class GameBoard extends JPanel {
             status.setText("Most recent game progress loaded!");
             updateUI();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    null, "Error message: " + e, "Error", JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

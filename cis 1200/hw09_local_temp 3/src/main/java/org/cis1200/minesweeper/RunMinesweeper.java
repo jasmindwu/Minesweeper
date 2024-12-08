@@ -11,9 +11,9 @@ import java.awt.*;
 
 /**
  * This class sets up the top-level frame and widgets for the GUI.
- *
+ * <p>
  * This game adheres to a Model-View-Controller design framework.
- *
+ * <p>
  * In a Model-View-Controller framework, Game initializes the view,
  * implements a bit of controller functionality through the reset
  * button, and then instantiates a GameBoard. The GameBoard will
@@ -52,12 +52,16 @@ public class RunMinesweeper implements Runnable {
 
         // Save button
         final JButton save = new JButton("Save");
-        save.addActionListener(e -> board.save("src/main/java/org/cis1200/files/minesweeper_save.txt"));
+        save.addActionListener(
+                e -> board.save("src/main/java/org/cis1200/files/minesweeper_save.txt")
+        );
         control_panel.add(save);
 
         // Load button
         final JButton load = new JButton("Load");
-        load.addActionListener(e -> board.load("src/main/java/org/cis1200/files/minesweeper_save.txt"));
+        load.addActionListener(
+                e -> board.load("src/main/java/org/cis1200/files/minesweeper_save.txt")
+        );
         control_panel.add(load);
 
         // Message for instructions button
@@ -82,7 +86,9 @@ public class RunMinesweeper implements Runnable {
 
         // Instructions button
         final JButton instructions = new JButton("Instructions");
-        instructions.addActionListener(e -> JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE));
+        instructions.addActionListener(e -> JOptionPane.showMessageDialog(
+                null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE)
+        );
         control_panel.add(instructions);
 
         // Put the frame on the screen
@@ -93,6 +99,8 @@ public class RunMinesweeper implements Runnable {
         // Start the game
         board.reset();
         // Shows game instructions upon starting the game
-        JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE) ;
+        JOptionPane.showMessageDialog(
+                null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }

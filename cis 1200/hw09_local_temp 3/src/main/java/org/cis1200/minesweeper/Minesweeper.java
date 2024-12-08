@@ -1,6 +1,6 @@
 package org.cis1200.minesweeper;
+
 import javax.swing.*;
-import java.lang.Math;
 import java.io.*;
 
 /*
@@ -11,21 +11,22 @@ import java.io.*;
 
 /**
  * This is Minesweeper!
- *
+ * <p>
  * Your objective is to uncover all the squares without mines hidden underneath.
  * Be careful not to detonate any of the 10 mines in the process, or the game will end.
  * You can place flags where you think there are mines to keep track.
  * Win by avoiding all mines and uncovering all non-mines!
- *
+ * <p>
  * You can save your game progress anytime and restore your most recent save anytime.
  */
 public class Minesweeper {
 
     /**
-     * I use a 2D array displayedBoard here to represent my Minesweeper board with 10 columns and 8 rows.
-     * This is justified because it visually resembles my minesweeper board, and I can easily
-     * traverse through the 2D array and access the squares using row and column indices.
-     *
+     * I use a 2D array displayedBoard here to represent my Minesweeper board with
+     * 10 columns and 8 rows. This is justified because it visually resembles
+     * my minesweeper board, and I can easily traverse through the 2D array
+     * and access the squares using row and column indices.
+     * <p>
      * The type contained in the 2D array is Square. This is justified because each square
      * of the grid has multiple pieces of information and states that change and need to be
      * accessed. By storing objects in this array, I can store many pieces of information
@@ -50,7 +51,7 @@ public class Minesweeper {
     public void coverSquares() {
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[r].length; c++) {
-                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO,false, false, false);
+                displayedBoard[r][c] = new Square(true, NumAdjBombs.ZERO, false, false, false);
             }
         }
     }
@@ -63,7 +64,7 @@ public class Minesweeper {
         int placedMines = 0;
 
         while (placedMines < numBombs) {
-            int r = (int) (Math.random() * 8);;
+            int r = (int) (Math.random() * 8);
             int c = (int) (Math.random() * 10);
             if (!displayedBoard[r][c].isMine()) {
                 displayedBoard[r][c].setMine();
@@ -87,7 +88,7 @@ public class Minesweeper {
                 }
 
                 //check directly above if possible
-                if (r > 0 && displayedBoard[r-1][c].isMine()) {
+                if (r > 0 && displayedBoard[r - 1][c].isMine()) {
                     numBombs++;
                 }
 
@@ -179,10 +180,12 @@ public class Minesweeper {
      */
     public void flag(int r, int c) {
         if (r < 8 && c < 10) {
-            if (displayedBoard[r][c].isCovered() && !gameOver && !displayedBoard[r][c].isFlagged()) {
+            if (displayedBoard[r][c].isCovered() && !gameOver
+                    && !displayedBoard[r][c].isFlagged()) {
                 displayedBoard[r][c].changeFlagged(this);
                 flagsRemaining--;
-            } else if (displayedBoard[r][c].isCovered() && !gameOver && displayedBoard[r][c].isFlagged()) {
+            } else if (displayedBoard[r][c].isCovered() && !gameOver
+                    && displayedBoard[r][c].isFlagged()) {
                 displayedBoard[r][c].changeFlagged(this);
                 flagsRemaining++;
             }
@@ -290,7 +293,8 @@ public class Minesweeper {
      */
     public void selectSquare(int r, int c) {
         if (c < 10 && r < 8) {
-            if (displayedBoard[r][c].isCovered() && !displayedBoard[r][c].isFlagged() && !gameOver) {
+            if (displayedBoard[r][c].isCovered()
+                    && !displayedBoard[r][c].isFlagged() && !gameOver) {
                 displayedBoard[r][c].uncover();
                 if (displayedBoard[r][c].isMine()) {
                     gameOver = true;
@@ -451,17 +455,17 @@ public class Minesweeper {
      * This main method illustrates how the model is completely independent of
      * the view and controller. We can play the game from start to finish
      * without ever creating a Java Swing object.
-     *
+     * <p>
      * This is modularity in action, and modularity is the bedrock of the
      * Model-View-Controller design framework.
-     *
+     * <p>
      * Run this file to see the output of this method in your console.
      */
     public static void main(String[] args) {
         Minesweeper m = new Minesweeper();
 
         m.flag(1, 2);
-        System.out.println(""+ m.getSquare(2, 1).isCovered());
+        System.out.println("" + m.getSquare(2, 1).isCovered());
 
 
         m.printGameState();

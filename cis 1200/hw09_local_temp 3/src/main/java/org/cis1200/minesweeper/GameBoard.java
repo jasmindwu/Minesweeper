@@ -138,11 +138,11 @@ public class GameBoard extends JPanel {
     public void load(String fileName) {
         try {
             Square[][] displayedBoard = new Square[8][10];
-            boolean[][] mineBoard = new boolean[8][10];
 
             FileReader fr = new FileReader(fileName);
             BufferedReader br = new BufferedReader(fr);
 
+            //loads overall game state
             int flagsRemaining = Integer.parseInt(br.readLine());
             ms.setFlagsRemaining(flagsRemaining);
 
@@ -152,6 +152,7 @@ public class GameBoard extends JPanel {
             boolean gameOver = Boolean.parseBoolean(br.readLine());
             ms.setGameOver(gameOver);
 
+            //loads data of all squares
             for (int r = 0; r < displayedBoard.length; r++) {
                 for (int c = 0; c < displayedBoard[r].length; c++) {
                     String squareLine = br.readLine();
@@ -160,10 +161,6 @@ public class GameBoard extends JPanel {
                     NumAdjBombs numAdjBombs = NumAdjBombs.valueOf(squareProperties[1]);
                     boolean isFlagged = Boolean.parseBoolean(squareProperties[2]);
                     boolean isMine = Boolean.parseBoolean(squareProperties[3]);
-
-                    if (isMine) {
-                        mineBoard[r][c] = true;
-                    }
 
                     boolean isChecked = Boolean.parseBoolean(squareProperties[4]);
                     Square curr = new Square(isCovered, numAdjBombs, isFlagged, isMine, isChecked);
@@ -174,7 +171,6 @@ public class GameBoard extends JPanel {
             br.close();
 
             ms.setDisplayedBoard(displayedBoard);
-            ms.setMineBoard(mineBoard);
 
             status.setText("Most recent game progress loaded!");
             updateUI();

@@ -1,9 +1,9 @@
 package org.cis1200.minesweeper;
 
 /*
- * CIS 120 HW09 - TicTacToe Demo
+ * CIS 120 HW09 - MineSweeper
  * (c) University of Pennsylvania
- * Created by Bayley Tuch, Sabrina Green, and Nicolas Corona in Fall 2020.
+ * Created by Jasmin Wu in Fall 2024.
  */
 
 import javax.swing.*;
@@ -12,17 +12,13 @@ import java.awt.*;
 /**
  * This class sets up the top-level frame and widgets for the GUI.
  *
- * This game adheres to a Model-View-Controller design framework. This
- * framework is very effective for turn-based games. We STRONGLY
- * recommend you review these lecture slides, starting at slide 8,
- * for more details on Model-View-Controller:
- * https://www.seas.upenn.edu/~cis120/current/files/slides/lec37.pdf
+ * This game adheres to a Model-View-Controller design framework.
  *
  * In a Model-View-Controller framework, Game initializes the view,
  * implements a bit of controller functionality through the reset
  * button, and then instantiates a GameBoard. The GameBoard will
  * handle the rest of the game's view and controller functionality, and
- * it will instantiate a TicTacToe object to serve as the game's model.
+ * it will instantiate a Minesweeper object to serve as the game's model.
  */
 public class RunMinesweeper implements Runnable {
     public void run() {
@@ -54,14 +50,17 @@ public class RunMinesweeper implements Runnable {
         reset.addActionListener(e -> board.reset());
         control_panel.add(reset);
 
+        // Save button
         final JButton save = new JButton("Save");
         save.addActionListener(e -> board.save("src/main/java/org/cis1200/files/minesweeper_save.txt"));
         control_panel.add(save);
 
+        // Load button
         final JButton load = new JButton("Load");
         load.addActionListener(e -> board.load("src/main/java/org/cis1200/files/minesweeper_save.txt"));
         control_panel.add(load);
 
+        // Message for instructions button
         String instructionsMessage =
 
                 "You're now playing Minesweeper!\n\n" +
@@ -81,6 +80,7 @@ public class RunMinesweeper implements Runnable {
                         "If you ever want to see these instructions again,\n" +
                         "just press the instructions button!";
 
+        // Instructions button
         final JButton instructions = new JButton("Instructions");
         instructions.addActionListener(e -> JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE));
         control_panel.add(instructions);
@@ -92,6 +92,7 @@ public class RunMinesweeper implements Runnable {
 
         // Start the game
         board.reset();
+        // Shows game instructions upon starting the game
         JOptionPane.showMessageDialog(null, instructionsMessage, "Instructions", JOptionPane.INFORMATION_MESSAGE) ;
     }
 }

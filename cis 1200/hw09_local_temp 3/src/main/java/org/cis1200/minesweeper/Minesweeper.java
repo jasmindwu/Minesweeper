@@ -21,8 +21,18 @@ import java.io.*;
  */
 public class Minesweeper {
 
+    /**
+     * I use a 2D array displayedBoard here to represent my Minesweeper board with 10 columns and 8 rows.
+     * This is justified because it visually resembles my minesweeper board, and I can easily
+     * traverse through the 2D array and access the squares using row and column indices.
+     *
+     * The type contained in the 2D array is Square. This is justified because each square
+     * of the grid has multiple pieces of information and states that change and need to be
+     * accessed. By storing objects in this array, I can store many pieces of information
+     * about each square that I can access, like if it is covered, has a mine, has been checked,
+     * and the number of adjacent mines.
+     */
     private Square[][] displayedBoard;
-    private boolean[][] mineBoard;
     private int flagsRemaining;
     private int numBombs;
     private boolean gameOver;
@@ -46,7 +56,7 @@ public class Minesweeper {
     }
 
     /**
-     * populateMines initializes mineBoard with mines
+     * populateMines initializes displayedBoard with mines
      * in random places.
      */
     public void populateMines() {
@@ -55,8 +65,7 @@ public class Minesweeper {
         while (placedMines < numBombs) {
             int r = (int) (Math.random() * 8);;
             int c = (int) (Math.random() * 10);
-            if (!mineBoard[r][c]) {
-                mineBoard[r][c] = true;
+            if (!displayedBoard[r][c].isMine()) {
                 displayedBoard[r][c].setMine();
                 placedMines++;
             }
@@ -68,47 +77,47 @@ public class Minesweeper {
      * for every square and assigns that value to them.
      */
     public void calcAdjMines() {
-        for (int r = 0; r < mineBoard.length; r++) {
-            for (int c = 0; c < mineBoard[r].length; c++) {
+        for (int r = 0; r < displayedBoard.length; r++) {
+            for (int c = 0; c < displayedBoard[r].length; c++) {
                 int numBombs = 0;
 
                 //check upper diagonal left if possible
-                if (r > 0 && c > 0 && mineBoard[r - 1][c - 1]) {
+                if (r > 0 && c > 0 && displayedBoard[r - 1][c - 1].isMine()) {
                     numBombs++;
                 }
 
                 //check directly above if possible
-                if (r > 0 && mineBoard[r-1][c]) {
+                if (r > 0 && displayedBoard[r-1][c].isMine()) {
                     numBombs++;
                 }
 
                 //check upper diagonal right if possible
-                if (r > 0 && c < 9 && mineBoard[r - 1][c + 1]) {
+                if (r > 0 && c < 9 && displayedBoard[r - 1][c + 1].isMine()) {
                     numBombs++;
                 }
 
                 //check directly right if possible
-                if (c < 9 && mineBoard[r][c + 1]) {
+                if (c < 9 && displayedBoard[r][c + 1].isMine()) {
                     numBombs++;
                 }
 
                 //check lower diagonal right if possible
-                if (r < 7 && c < 9 && mineBoard[r + 1][c + 1]) {
+                if (r < 7 && c < 9 && displayedBoard[r + 1][c + 1].isMine()) {
                     numBombs++;
                 }
 
                 //check directly below if possible
-                if (r < 7 && mineBoard[r + 1][c]) {
+                if (r < 7 && displayedBoard[r + 1][c].isMine()) {
                     numBombs++;
                 }
 
                 //check lower diagonal left if possible
-                if (r < 7 && c > 0 && mineBoard[r + 1][c - 1]) {
+                if (r < 7 && c > 0 && displayedBoard[r + 1][c - 1].isMine()) {
                     numBombs++;
                 }
 
                 //check directly left if possible
-                if (c > 0 && mineBoard[r][c - 1]) {
+                if (c > 0 && displayedBoard[r][c - 1].isMine()) {
                     numBombs++;
                 }
 
@@ -182,6 +191,28 @@ public class Minesweeper {
     }
 
     /**
+     * RECURSION COMPONENT:
+     * If the current square has zero adjacent bombs, this algorithm uncovers the square.
+     * It also uncovers all adjacent squares, and if any of those adjacent squares
+     * also have zero adjacent bombs, the algorithm uncovers all adjacent squares
+     * for that square as well.
+     *
+     * Why recursion?
+     *
+     * Recursion is useful instead of iteration here because then I do not
+     * need to manually check every single square of the board each time the
+     * user selects a square. This is helpful with scaling, and it also simplifies
+     * the code. If one square has zero adjacent bombs, then it triggers the uncovering
+     * of its adjacent squares, and this triggering continues until all squares
+     * with zero adjacent bombs that were adjacent to any uncovered squares in the
+     * process are dealt with. It would be difficult with iteration because I would
+     * need to iterate over the whole grid each time even if the number of squares
+     * needed to be uncovered are very localized and small. Also, the uncovering is
+     * outward spreading, so it would also be difficult to write the logic for
+     * squares that need to be uncovered that are far away from the clicked square.
+     */
+
+    /**
      * uncoverNonMines recursively uncovers adjacent squares if
      * they do not have adjacent bombs. It stops uncovering
      * once it reaches the grid edge, a square that has already been uncovered,
@@ -202,6 +233,7 @@ public class Minesweeper {
                 flagsRemaining++;
             }
 
+            //Base case: stops recursing here if the square does not have zero adjacent bombs.
             if (displayedBoard[r][c].getNumAdjBombs() == NumAdjBombs.ZERO) {
 
                 //check upper diagonal left if possible
@@ -366,15 +398,6 @@ public class Minesweeper {
     }
 
     /**
-     * setMineBoard sets the mine board of the game.
-     *
-     * @param mineBoard the mine board to set
-     */
-    public void setMineBoard(boolean[][] mineBoard) {
-        this.mineBoard = mineBoard;
-    }
-
-    /**
      * setMineBoard sets if the game is over.
      *
      * @param gameOver if the game is over
@@ -414,7 +437,6 @@ public class Minesweeper {
      */
     public void reset() {
         displayedBoard = new Square[8][10];
-        mineBoard = new boolean[8][10];
         gameOver = false;
         numBombs = 10;
         flagsRemaining = numBombs;

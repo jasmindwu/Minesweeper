@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 
 /**
  * This class instantiates a Minesweeper object, which is the model for the game.
@@ -91,6 +92,105 @@ public class GameBoard extends JPanel {
         requestFocusInWindow();
     }
 
+    public void save(String fileName) {
+        if (fileName == null) {
+            throw new IllegalArgumentException();
+        } else {
+            try {
+                Square[][] displayedBoard = ms.getDisplayedBoard();
+                boolean[][] mineBoard = ms.geMineBoard();
+                FileWriter fw = new FileWriter(fileName);
+                BufferedWriter bw = new BufferedWriter(fw);
+
+                bw.write("" + ms.getFlagsRemaining());
+                bw.newLine();
+
+                bw.write("" + ms.getNumBombs());
+                bw.newLine();
+
+                bw.write("" + ms.isGameOver());
+                bw.newLine();
+
+                bw.write("" + ms.checkWin());
+                bw.newLine();
+
+                for (int r = 0; r < displayedBoard.length; r++) {
+                    for (int c = 0; c < displayedBoard[r].length; c++) {
+                        Square curr = displayedBoard[r][c];
+                        bw.write(curr.isCovered() + "," + curr.getNumAdjBombs() + ","
+                                + curr.isFlagged() + "," + curr.isMine() + ","
+                                + curr.isChecked());
+                        bw.newLine();
+                    }
+                }
+                status.setText("Game progress saved!");
+                bw.close();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    public void load(String fileName) {
+        if (fileName == null) {
+            throw new IllegalArgumentException();
+        } else {
+            try {
+                Square[][] displayedBoard = new Square[8][10];
+                boolean[][] mineBoard = new boolean[8][10];
+
+                FileReader fr = new FileReader(fileName);
+                BufferedReader br = new BufferedReader(fr);
+
+                int flagsRemaining = Integer.parseInt(br.readLine());
+                ms.setFlagsRemaining(flagsRemaining);
+
+                int numBombs = Integer.parseInt(br.readLine());
+                ms.setNumBombs(numBombs);
+
+                boolean gameOver = Boolean.parseBoolean(br.readLine());
+                ms.setGameOver(gameOver);
+
+                boolean won = Boolean.parseBoolean(br.readLine());
+                ms.setWon(won);
+
+                for (int r = 0; r < displayedBoard.length; r++) {
+                    for (int c = 0; c < displayedBoard[r].length; c++) {
+                        String squareLine = br.readLine();
+                        String[] squareProperties = squareLine.split(",");
+                        boolean isCovered = Boolean.parseBoolean(squareProperties[0]);
+                        NumAdjBombs numAdjBombs = NumAdjBombs.valueOf(squareProperties[1]);
+                        boolean isFlagged = Boolean.parseBoolean(squareProperties[2]);
+                        boolean isMine = Boolean.parseBoolean(squareProperties[3]);
+
+                        if (isMine) {
+                            mineBoard[r][c] = true;
+                        }
+
+                        boolean isChecked = Boolean.parseBoolean(squareProperties[4]);
+
+                        Square curr = new Square(isCovered, numAdjBombs, isFlagged, isMine, isChecked);
+
+                        displayedBoard[r][c] = curr;
+                    }
+                }
+                br.close();
+
+                ms.setDisplayedBoard(displayedBoard);
+                ms.setMineBoard(mineBoard);
+
+                status.setText("Most recent game progress loaded!");
+                updateUI();
+
+
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
     /**
      * Updates the JLabel to reflect the current state of the game.
      */

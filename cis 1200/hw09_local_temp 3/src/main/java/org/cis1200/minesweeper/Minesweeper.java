@@ -1,5 +1,7 @@
 package org.cis1200.minesweeper;
+import javax.swing.*;
 import java.lang.Math;
+import java.io.*;
 
 /**
  * CIS 120 HW09 - TicTacToe Demo
@@ -301,16 +303,52 @@ public class Minesweeper {
         return true;
     }
 
-    public int getFlagsRemaining() {
-        return flagsRemaining;
-    }
-
     public boolean isGameOver() {
         return gameOver;
     }
 
+    public int getNumBombs() {
+        return numBombs;
+    }
+
+    public int getFlagsRemaining() {
+        return flagsRemaining;
+    }
+
+    public Square[][] getDisplayedBoard() {
+        return displayedBoard;
+    }
+
+    public boolean[][] geMineBoard() {
+        return mineBoard;
+    }
+
     public Square getSquare(int r, int c) {
         return displayedBoard[r][c];
+    }
+
+    public void setFlagsRemaining(int flagsRemaining) {
+        this.flagsRemaining = flagsRemaining;
+    }
+
+    public void setNumBombs(int numBombs) {
+        this.numBombs = numBombs;
+    }
+
+    public void setDisplayedBoard(Square[][] displayedBoard) {
+        this.displayedBoard = displayedBoard;
+    }
+
+    public void setMineBoard(boolean[][] mineBoard) {
+        this.mineBoard = mineBoard;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public void setWon(boolean won) {
+        this.won = won;
     }
 
     /**
@@ -354,7 +392,36 @@ public class Minesweeper {
         calcAdjMines();
     }
 
-    /**
+    /*
+    public void save(String fileName) {
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog();
+        }
+    }
+
+    public static Minesweeper load(String fileName) {
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Minesweeper savedFile = (Minesweeper) ois.readObject();
+            return savedFile;
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(
+                    frame, // parent of dialog window
+                    "Cannot load file\n" + ex.getMessage(),
+                    "Alert", // title of dialog
+                    JOptionPane.ERROR_MESSAGE // type of dialog
+            );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }*/
+
+        /**
      * This main method illustrates how the model is completely independent of
      * the view and controller. We can play the game from start to finish
      * without ever creating a Java Swing object.

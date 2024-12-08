@@ -182,11 +182,11 @@ public class Minesweeper {
         if (r < 8 && c < 10) {
             if (displayedBoard[r][c].isCovered() && !gameOver
                     && !displayedBoard[r][c].isFlagged()) {
-                displayedBoard[r][c].changeFlagged(this);
+                displayedBoard[r][c].changeFlagged();
                 flagsRemaining--;
             } else if (displayedBoard[r][c].isCovered() && !gameOver
                     && displayedBoard[r][c].isFlagged()) {
-                displayedBoard[r][c].changeFlagged(this);
+                displayedBoard[r][c].changeFlagged();
                 flagsRemaining++;
             }
         }
@@ -232,7 +232,7 @@ public class Minesweeper {
             displayedBoard[r][c].checked();
 
             if (displayedBoard[r][c].isFlagged()) {
-                displayedBoard[r][c].changeFlagged(this);
+                displayedBoard[r][c].changeFlagged();
                 flagsRemaining++;
             }
 

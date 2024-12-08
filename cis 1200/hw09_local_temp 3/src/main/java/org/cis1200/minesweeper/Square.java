@@ -72,13 +72,8 @@ public class Square {
      * Flags the square if it is un-flagged and un-flags the square
      * if it is flagged.
      */
-    public void changeFlagged(Minesweeper m) {
+    public void changeFlagged() {
         flagged = !flagged;
-        if (flagged) {
-            m.setFlagsRemaining(m.getFlagsRemaining() - 1);
-        } else {
-            m.setFlagsRemaining(m.getFlagsRemaining() + 1);
-        }
     }
 
     /**

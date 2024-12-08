@@ -470,14 +470,14 @@ public class MinesweeperTest {
 
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[r].length; c++) {
-                displayedBoard[r][c].changeFlagged(m);
+                displayedBoard[r][c].changeFlagged();
                 assertTrue(displayedBoard[r][c].isFlagged());
             }
         }
 
         for (int r = 0; r < displayedBoard.length; r++) {
             for (int c = 0; c < displayedBoard[r].length; c++) {
-                displayedBoard[r][c].changeFlagged(m);
+                displayedBoard[r][c].changeFlagged();
                 assertFalse(displayedBoard[r][c].isFlagged());
             }
         }
@@ -559,14 +559,14 @@ public class MinesweeperTest {
         Square[][] displayedBoard = m.getDisplayedBoard();
 
         //adjacent
-        displayedBoard[2][3].changeFlagged(m);
-        displayedBoard[2][4].changeFlagged(m);
-        displayedBoard[2][5].changeFlagged(m);
-        displayedBoard[3][5].changeFlagged(m);
-        displayedBoard[4][5].changeFlagged(m);
-        displayedBoard[4][4].changeFlagged(m);
-        displayedBoard[4][3].changeFlagged(m);
-        displayedBoard[3][3].changeFlagged(m);
+        displayedBoard[2][3].changeFlagged();
+        displayedBoard[2][4].changeFlagged();
+        displayedBoard[2][5].changeFlagged();
+        displayedBoard[3][5].changeFlagged();
+        displayedBoard[4][5].changeFlagged();
+        displayedBoard[4][4].changeFlagged();
+        displayedBoard[4][3].changeFlagged();
+        displayedBoard[3][3].changeFlagged();
 
         //not directly adjacent
         displayedBoard[1][2].setMine();
@@ -819,7 +819,7 @@ public class MinesweeperTest {
     @Test
     public void testSelectSquaresFlagged() {
         Square[][] displayedBoard = m.getDisplayedBoard();
-        displayedBoard[3][3].changeFlagged(m);
+        displayedBoard[3][3].changeFlagged();
         m.selectSquare(3, 3);
         assertFalse(m.checkWin());
         assertTrue(displayedBoard[3][3].isCovered());
@@ -934,27 +934,6 @@ public class MinesweeperTest {
         assertEquals(10, m.getNumBombs());
     }
 
-    //tests getFlagsRemaining
-    @Test
-    public void testGetFlagsRemaining() {
-        Square[][] displayedBoard = m.getDisplayedBoard();
-        assertEquals(10, m.getFlagsRemaining());
-        displayedBoard[3][3].changeFlagged(m);
-        assertEquals(9, m.getFlagsRemaining());
-        displayedBoard[3][4].changeFlagged(m);
-        displayedBoard[3][5].changeFlagged(m);
-        displayedBoard[3][6].changeFlagged(m);
-        displayedBoard[3][7].changeFlagged(m);
-        displayedBoard[3][8].changeFlagged(m);
-        displayedBoard[3][9].changeFlagged(m);
-        displayedBoard[4][1].changeFlagged(m);
-        displayedBoard[4][2].changeFlagged(m);
-        displayedBoard[4][3].changeFlagged(m);
-        assertEquals(0, m.getFlagsRemaining());
-        displayedBoard[4][4].changeFlagged(m);
-        assertEquals(-1, m.getFlagsRemaining());
-    }
-
     //tests getSquare
     @Test
     public void testGetSquare() {
@@ -1039,7 +1018,7 @@ public class MinesweeperTest {
     public void testsFlaggedFunctionality() {
         Square[][] displayedBoard = m.getDisplayedBoard();
         assertFalse(displayedBoard[1][1].isFlagged());
-        displayedBoard[1][1].changeFlagged(m);
+        displayedBoard[1][1].changeFlagged();
         assertTrue(displayedBoard[1][1].isFlagged());
     }
 
